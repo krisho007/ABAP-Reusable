@@ -1,0 +1,1 @@
+SELECT SINGLE name_textc INTO @DATA(lv_user_name) FROM user_addr WHERE bname = @sy-uname.
