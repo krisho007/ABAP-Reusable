@@ -1,0 +1,68 @@
+@78\QImporting@	IT_RECIPIENTS	TYPE BCSY_SMTPA	Multiple Email addresses
+@78\QImporting@	IV_SUBJECT	TYPE SO_OBJ_DES	EMail Subject
+@78\QImporting@	IT_BODY_CONTENT	TYPE SOLI_TAB	Email body as HTML table
+@78\QImporting@	IV_BODY_TYPE	TYPE SO_OBJ_TP  DEFAULT 'HTM'	Type of body content
+@78\QImporting@	IT_ATTACHMENT	TYPE SOLIX_TAB OPTIONAL	Binary content of an attachment
+@78\QImporting@	IV_ATTACHMENT_TYPE	TYPE SO_OBJ_TP OPTIONAL	Ex: XLX, PDF etc.
+@78\QImporting@	IV_ATTACHMENT_DESCRIPTION	TYPE SO_OBJ_DES OPTIONAL	Attachment's short description
+@03\QException@	/IWBEP/CX_MGW_BUSI_EXCEPTION		Business Exception
+
+  METHOD send_email.
+
+    TRY.
+
+        DATA(lo_send_request) = cl_bcs=>create_persistent( ).
+
+        " Subject and body of the email
+        DATA(lo_document) = cl_document_bcs=>create_document(
+                        i_type    = iv_body_type
+                        i_text    = it_body_content
+*                        i_length  = '12'
+                        i_subject = iv_subject ).
+
+        " Sender
+        DATA(lo_sender) = cl_sapuser_bcs=>create( sy-uname ).
+        CALL METHOD lo_send_request->set_sender
+          EXPORTING
+            i_sender = lo_sender.
+
+        LOOP AT it_recipients INTO DATA(lv_email).
+          " Recipient
+          DATA(lo_recipient) = cl_cam_address_bcs=>create_internet_address( lv_email ).
+          CALL METHOD lo_send_request->add_recipient
+            EXPORTING
+              i_recipient = lo_recipient.
+        ENDLOOP.
+
+        "Add Attachment
+        lo_document->add_attachment(
+        i_attachment_type    = iv_attachment_type
+        i_attachment_subject = iv_attachment_description
+        i_att_content_hex    = it_attachment ).
+
+        CALL METHOD lo_send_request->set_document( lo_document ).
+
+        "Send Email
+        CALL METHOD lo_send_request->send(
+          RECEIVING
+            result = DATA(lv_error) ).
+
+        IF lv_error <> 'X'.
+          "Exception handling
+          MESSAGE e033(zmm_wup_messages) INTO DATA(lv_message).
+
+          RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
+            EXPORTING
+              textid            = /iwbep/cx_mgw_busi_exception=>business_error_unlimited
+              message_unlimited = lv_message.
+        ENDIF.
+
+        COMMIT WORK.
+
+      CATCH cx_bcs INTO DATA(lx_bcs_exception).
+        RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
+          EXPORTING
+            textid            = /iwbep/cx_mgw_busi_exception=>business_error_unlimited
+            message_unlimited = lx_bcs_exception->get_text( ).
+    ENDTRY.
+  ENDMETHOD.
