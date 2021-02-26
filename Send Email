@@ -1,14 +1,15 @@
     METHODS send_email
       IMPORTING
-                it_recipients             TYPE bcsy_smtpa "Multiple Email addresses
-                iv_subject                TYPE so_obj_des "E Mail Subject
-                it_body_content           TYPE soli_tab   "Email body as HTML table
-                iv_sender                 TYPE uname DEFAULT sy-uname "Sender
-                iv_body_type              TYPE so_obj_tp  DEFAULT 'HTM'   "Type of body content
-                it_attachment             TYPE solix_tab OPTIONAL "Binary content of an attachment
-                iv_attachment_type        TYPE so_obj_tp OPTIONAL "Ex: XLX, PDF etc.
-                iv_attachment_description TYPE so_obj_des OPTIONAL "   Attachment's short description
-      RAISING   /iwbep/cx_mgw_busi_exception. "       Business Exception
+                it_recipients             TYPE bcsy_smtpa               "Multiple Email addresses
+                iv_subject                TYPE so_obj_des               "E Mail Subject
+                it_body_content           TYPE soli_tab                 "Email body as HTML table
+                iv_sender                 TYPE uname DEFAULT sy-uname   "Sender
+                iv_body_type              TYPE so_obj_tp  DEFAULT 'HTM' "Type of body content
+                it_attachment             TYPE solix_tab OPTIONAL       "Binary content of an attachment
+                iv_attachment_type        TYPE so_obj_tp OPTIONAL       "Ex: XLX, PDF etc.
+                iv_attachment_description TYPE so_obj_des OPTIONAL      "Attachment's short description
+                iv_commit                 TYPE char1 DEFAULT ''         "Commit?
+      RAISING   /iwbep/cx_mgw_busi_exception.  
 
   METHOD send_email.
 
@@ -60,12 +61,14 @@
               message_unlimited = lv_message.
         ENDIF.
 
-        COMMIT WORK.
-
       CATCH cx_bcs INTO DATA(lx_bcs_exception).
         RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
           EXPORTING
             textid            = /iwbep/cx_mgw_busi_exception=>business_error_unlimited
             message_unlimited = lx_bcs_exception->get_text( ).
     ENDTRY.
+
+    IF iv_commit EQ 'X'.
+      COMMIT WORK.
+    ENDIF.
   ENDMETHOD.
