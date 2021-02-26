@@ -3,6 +3,7 @@
                 it_recipients             TYPE bcsy_smtpa "Multiple Email addresses
                 iv_subject                TYPE so_obj_des "E Mail Subject
                 it_body_content           TYPE soli_tab   "Email body as HTML table
+                iv_sender                 TYPE uname DEFAULT sy-uname "Sender
                 iv_body_type              TYPE so_obj_tp  DEFAULT 'HTM'   "Type of body content
                 it_attachment             TYPE solix_tab OPTIONAL "Binary content of an attachment
                 iv_attachment_type        TYPE so_obj_tp OPTIONAL "Ex: XLX, PDF etc.
@@ -23,7 +24,7 @@
                         i_subject = iv_subject ).
 
         " Sender
-        DATA(lo_sender) = cl_sapuser_bcs=>create( sy-uname ).
+        DATA(lo_sender) = cl_sapuser_bcs=>create( iv_sender ).
         CALL METHOD lo_send_request->set_sender
           EXPORTING
             i_sender = lo_sender.
