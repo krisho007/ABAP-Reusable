@@ -1,11 +1,13 @@
-@78\QImporting@	IT_RECIPIENTS	TYPE BCSY_SMTPA	Multiple Email addresses
-@78\QImporting@	IV_SUBJECT	TYPE SO_OBJ_DES	EMail Subject
-@78\QImporting@	IT_BODY_CONTENT	TYPE SOLI_TAB	Email body as HTML table
-@78\QImporting@	IV_BODY_TYPE	TYPE SO_OBJ_TP  DEFAULT 'HTM'	Type of body content
-@78\QImporting@	IT_ATTACHMENT	TYPE SOLIX_TAB OPTIONAL	Binary content of an attachment
-@78\QImporting@	IV_ATTACHMENT_TYPE	TYPE SO_OBJ_TP OPTIONAL	Ex: XLX, PDF etc.
-@78\QImporting@	IV_ATTACHMENT_DESCRIPTION	TYPE SO_OBJ_DES OPTIONAL	Attachment's short description
-@03\QException@	/IWBEP/CX_MGW_BUSI_EXCEPTION		Business Exception
+    METHODS send_email
+      IMPORTING
+                it_recipients             TYPE bcsy_smtpa "Multiple Email addresses
+                iv_subject                TYPE so_obj_des "E Mail Subject
+                it_body_content           TYPE soli_tab   "Email body as HTML table
+                iv_body_type              TYPE so_obj_tp  DEFAULT 'HTM'   "Type of body content
+                it_attachment             TYPE solix_tab OPTIONAL "Binary content of an attachment
+                iv_attachment_type        TYPE so_obj_tp OPTIONAL "Ex: XLX, PDF etc.
+                iv_attachment_description TYPE so_obj_des OPTIONAL "   Attachment's short description
+      RAISING   /iwbep/cx_mgw_busi_exception. "       Business Exception
 
   METHOD send_email.
 
