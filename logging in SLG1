@@ -1,0 +1,20 @@
+" Step 1. Create a Log Object and Sub Object using TCode SLG0
+
+" Step 2. Create instance of a log class
+  DATA: lv_message1 TYPE char255.
+  MESSAGE e038(zemt_supp_message) INTO lv_message1.
+  mo_application_log->write_text(
+  EXPORTING
+     i_text =  lv_message1
+     i_msgty = 'W' ). "E or I
+
+" Step 3. Write Log
+  DATA: lv_message1 TYPE char255.
+  MESSAGE e038(zemt_supp_message) INTO lv_message1.
+  mo_application_log->write_text(
+    EXPORTING
+      i_text =  lv_message1
+      i_msgty = 'W' ).
+       
+" Step 4. Save Log
+  mo_application_log->save( ).
