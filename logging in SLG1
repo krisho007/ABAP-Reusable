@@ -1,12 +1,11 @@
 " Step 1. Create a Log Object and Sub Object using TCode SLG0
 
 " Step 2. Create instance of a log class
-  DATA: lv_message1 TYPE char255.
-  MESSAGE e038(zemt_supp_message) INTO lv_message1.
-  mo_application_log->write_text(
-  EXPORTING
-     i_text =  lv_message1
-     i_msgty = 'W' ). "E or I
+  DATA mo_application_log TYPE REF TO cl_app_log_handler .
+  mo_application_log = NEW cl_app_log_handler(
+    i_obj = 'ZEMT'
+    i_subobj = 'ZUI'
+     ).
 
 " Step 3. Write Log
   DATA: lv_message1 TYPE char255.
