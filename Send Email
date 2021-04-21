@@ -24,11 +24,14 @@
 *                        i_length  = '12'
                         i_subject = iv_subject ).
 
-        " Sender
+        " SAP User as Sender
         DATA(lo_sender) = cl_sapuser_bcs=>create( iv_sender ).
+        " Any email ID as the Sender
+        DATA(lo_sender) = cl_cam_address_bcs=>create_internet_address( i_address_string = 'abcd@krishnakammaje.com'
+                                                                 i_address_name = 'Krishna Speed Post' ).          
         CALL METHOD lo_send_request->set_sender
           EXPORTING
-            i_sender = lo_sender.
+            i_sender = lo_sender.   
 
         LOOP AT it_recipients INTO DATA(lv_email).
           " Recipient
